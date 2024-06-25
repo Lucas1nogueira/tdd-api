@@ -1,5 +1,14 @@
+from datetime import datetime
+
+
 def product_data():
-    return {"name": "Iphone 14 Pro Max", "quantity": 10, "price": 8500, "status": True}
+    return {
+        "name": "Iphone 14 Pro Max",
+        "quantity": 10,
+        "price": 8500,
+        "status": True,
+        "updated_at": str(datetime.now()),
+    }
 
 
 def products_data():

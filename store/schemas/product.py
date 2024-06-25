@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Optional
 from pydantic import BaseModel, Field
 from store.schemas.base import BaseSchemaMixin, OutMixin
@@ -22,6 +23,7 @@ class ProductUpdate(BaseSchemaMixin):
     quantity: Optional[int] = Field(None, description="Product quantity")
     price: Optional[float] = Field(None, description="Product price")
     status: Optional[bool] = Field(None, description="Product status")
+    updated_at: datetime = Field(..., description="Last time updated")
 
 
 class ProductUpdateOut(ProductOut):

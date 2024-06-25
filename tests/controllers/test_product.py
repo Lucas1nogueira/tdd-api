@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import List
 
 import pytest
@@ -64,15 +65,22 @@ async def test_controller_patch_should_return_success(
     client, products_url, product_inserted
 ):
     response = await client.patch(
-        f"{products_url}{product_inserted.id}", json={"price": 9000}
+        f"{products_url}{product_inserted.id}",
+        json={"price": 9000, "updated_at": str(datetime.now())},
     )
 
     content = response.json()
 
+    assert response.status_code == status.HTTP_200_OK
+
+    creation_date = datetime.strptime(content["created_at"], "%Y-%m-%dT%H:%M:%S.%f")
+    update_date = datetime.strptime(content["updated_at"], "%Y-%m-%dT%H:%M:%S.%f")
+
+    assert update_date > creation_date
+
     del content["created_at"]
     del content["updated_at"]
 
-    assert response.status_code == status.HTTP_200_OK
     assert content == {
         "id": str(product_inserted.id),
         "name": "Iphone 14 Pro Max",

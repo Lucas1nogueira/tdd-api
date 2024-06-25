@@ -16,7 +16,11 @@ class ProductUsecase:
 
     async def create(self, body: ProductIn) -> ProductOut:
         product_model = ProductModel(**body.model_dump())
-        await self.collection.insert_one(product_model.model_dump())
+
+        try:
+            await self.collection.insert_one(product_model.model_dump())
+        except Exception as e:
+            raise Exception(message=f"Could not insert product: {e.message}")
 
         return ProductOut(**product_model.model_dump())
 
@@ -32,6 +36,10 @@ class ProductUsecase:
         return [ProductOut(**item) async for item in self.collection.find()]
 
     async def update(self, id: UUID, body: ProductUpdate) -> ProductUpdateOut:
+        product = await self.collection.find_one({"id": id})
+        if not product:
+            raise NotFoundException(message=f"Product not found with filter: {id}")
+
         result = await self.collection.find_one_and_update(
             filter={"id": id},
             update={"$set": body.model_dump(exclude_none=True)},
